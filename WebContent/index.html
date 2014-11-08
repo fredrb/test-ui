@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' 
+			content='text/html;charset=UTF-8'/>
+		<script src="resources/sap-ui-core.js" 
+			id="sap-ui-bootstrap" 
+			data-sap-ui-libs="sap.ui.commons, sap.ui.table" 
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<!-- add sap.ui.table,sap.ui.ux3 and/or other libraries to 'data-sap-ui-libs' if required -->
+
+		<script>
+			var DATA = [];
+			var updateModel = function(model, table, json_data){
+				model.setData({modelData : json_data});
+				table.setModel(model);
+				table.bindRows("/modelData");				
+			}
+		
+			var oModel = new sap.ui.model.json.JSONModel();
+			var oAppHeader = new sap.ui.commons.ApplicationHeader("appHeader");
+			oAppHeader.setLogoSrc("http://sap.github.io/openui5/images/icotxt_white_220x72_blue_open.png");
+			oAppHeader.placeAt("header");
+			
+			
+			var userText    = new sap.ui.commons.TextField("userText", { height: "20px", width: "100%" });		
+			var userLabel   = new sap.ui.commons.Label({ text: "User: ", labelFor: userText });			
+			var roleText    = new sap.ui.commons.TextField("roleText", { height: "20px", width: "100%" });			
+			var roleLabel   = new sap.ui.commons.Label({ text: "Role: ", labelFor: roleText });
+			var numberText  = new sap.ui.commons.TextField("numberText", {height: "20px", width: "100%"});
+			var numberLabel = new sap.ui.commons.Label({ text: "Number: ", labelFor: numberText});
+			
+			var onlineText = new sap.ui.commons.CheckBox({
+				text: "Available now? ",
+				tooltip : "Check me now",
+				checked: false
+			});
+			
+			var oTable = new sap.ui.table.Table({ visibleRowCount: 7, firstVisibleRow: 3, selectionMode: sap.ui.table.SelectionMode.Single });
+			
+			var oBt    = new sap.ui.commons.Button("btIn", {
+				text : "Add",
+				width : "350px",
+				height : "20px",
+				style  : sap.ui.commons.ButtonStyle.Accept,
+				press  : function(){
+					DATA.push({
+						username: userText.getValue(), 
+						role: roleText.getValue(), 
+						number: numberText.getValue(), 
+						available: onlineText.getChecked()
+					});
+					updateModel(oModel, oTable, DATA);
+				}
+			});
+			
+			var oMatrix = new sap.ui.commons.layout.MatrixLayout({
+				layoutFixed: true,
+				width: "350px"
+			});
+			
+			//oMatrix.setWidth('100px', '150px');
+			
+			oMatrix.createRow(userLabel, userText);
+			oMatrix.createRow(roleLabel, roleText);
+			oMatrix.createRow(numberLabel, numberText);
+			oMatrix.createRow(onlineText);
+			
+			var oPanel = new sap.ui.commons.Panel({
+				width: "100%",
+				title: new sap.ui.core.Title({
+					text: "Add User",
+					icon: "http://upload.wikimedia.org/wikipedia/commons/d/db/User.png"
+				})
+			});
+			
+			oPanel.addContent(oMatrix);
+			oPanel.addContent(oBt);
+					
+			
+			oTable.addColumn(new sap.ui.table.Column("userColumn", {
+				width: "50px",
+				label: new sap.ui.commons.Label({text:"Username"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "username")
+			}));
+			
+			oTable.addColumn(new sap.ui.table.Column("roleColumn",{
+				width: "75px",
+				label: new sap.ui.commons.Label({text:"Role"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "role")
+			}));
+			
+			oTable.addColumn(new sap.ui.table.Column("numberColumn", {
+				width: "50px",
+				label: new sap.ui.commons.Label({text:"Number"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "number")
+			}));
+			
+			oTable.addColumn(new sap.ui.table.Column("availableColumn", {
+				width: "15px",
+				label: new sap.ui.commons.Label({text:"Online"}),
+				template: new sap.ui.commons.CheckBox().bindProperty("checked", "available"),
+				hAlign: "Center"
+			})); 
+				
+			updateModel(oModel, oTable, DATA);
+			
+			oPanel.placeAt("content");
+			oTable.placeAt("content");
+			
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="header"></div>
+		<div id="content">
+		
+		</div>		
+	</body>
+</html>
